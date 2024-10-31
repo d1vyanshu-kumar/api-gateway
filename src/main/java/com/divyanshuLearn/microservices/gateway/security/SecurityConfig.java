@@ -9,12 +9,30 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-       return httpSecurity.authorizeHttpRequests(authorize ->
-                authorize.anyRequest().authenticated()
-        ).oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(Customizer.withDefaults())
-        ).build();
-    }
+// this is the list of urls that are free to access without authentication
+private final String[] freeResourceUrls = {"/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**",
+        "/swagger-resources/**", "/api-docs/**", "/aggregate/**", "/actuator/prometheus"};
+
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+//       return httpSecurity.authorizeHttpRequests(authorize ->
+//                authorize
+//                        .requestMatchers(freeResourceUrls)
+//                        .permitAll()
+//                        .anyRequest().authenticated()
+//        ).oauth2ResourceServer(oauth2 ->
+//                oauth2.jwt(Customizer.withDefaults())
+//        ).build();
+//    }
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    return httpSecurity
+            .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers(freeResourceUrls).permitAll() // Allow public access to these URLs
+                    .anyRequest().authenticated()                 // Require authentication for all other requests
+            )
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+            .build();
+}
+
 }
