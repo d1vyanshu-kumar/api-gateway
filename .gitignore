@@ -31,3 +31,16 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Docker volume data ###
+mysql/
+volume-data/
+docker/mysql/data/
+data/
+*.pem
+
+### IDE ###
+.idea/
+*.iws
+*.iml
+*.ipr
